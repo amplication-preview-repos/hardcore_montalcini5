@@ -1,0 +1,58 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Repository {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String?
+  description String?
+  bugs        Bug[]
+  files       File[]
+  wikis       Wiki[]
+}
+
+model Wiki {
+  id           String      @id @default(cuid())
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  content      String?
+  repository   Repository? @relation(fields: [repositoryId], references: [id])
+  repositoryId String?
+}
+
+model File {
+  id           String      @id @default(cuid())
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  fileName     String?
+  fileContent  Json?
+  repository   Repository? @relation(fields: [repositoryId], references: [id])
+  repositoryId String?
+}
+
+model Bug {
+  id           String           @id @default(cuid())
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  title        String?
+  description  String?
+  severity     EnumBugSeverity?
+  status       EnumBugStatus?
+  repository   Repository?      @relation(fields: [repositoryId], references: [id])
+  repositoryId String?
+}
+
+enum EnumBugSeverity {
+  Option1
+}
+
+enum EnumBugStatus {
+  Option1
+}
